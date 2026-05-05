@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut, Package, ShoppingBag, Settings as SettingsIcon, ToggleRight } from "lucide-react";
+import { ArrowLeft, Loader2, LogOut, Package, ShoppingBag, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminProducts } from "@/components/admin/AdminProducts";
