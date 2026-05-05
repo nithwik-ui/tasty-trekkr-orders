@@ -13,68 +13,35 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [claiming, setClaiming] = useState(false);
 
-  const refresh = async () => {
+  const check = async () => {
     setLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { navigate("/admin/auth"); return; }
-    setUserId(session.user.id);
+    if (!session) { navigate("/admin/auth", { replace: true }); return; }
     const { data, error } = await supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" });
     if (error) toast.error(error.message);
-    setIsAdmin(Boolean(data));
+    if (!data) {
+      toast.error("Access denied. Admins only.");
+      await supabase.auth.signOut();
+      navigate("/admin/auth", { replace: true });
+      return;
+    }
+    setIsAdmin(true);
     setLoading(false);
   };
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) navigate("/admin/auth");
+      if (!session) navigate("/admin/auth", { replace: true });
     });
-    refresh();
+    check();
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
 
-  const claimAdmin = async () => {
-    setClaiming(true);
-    const { data, error } = await supabase.rpc("claim_first_admin");
-    setClaiming(false);
-    if (error) return toast.error(error.message);
-    if (data) {
-      setIsAdmin(true);
-      setLoading(false);
-      toast.success("You are now admin!");
-      navigate("/admin", { replace: true });
-    }
-    else toast.error("An admin already exists. Ask them to grant you access.");
-  };
-
   const signOut = async () => { await supabase.auth.signOut(); navigate("/admin/auth"); };
 
-  if (loading) return <div className="min-h-screen grid place-items-center"><Loader2 className="animate-spin" /></div>;
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen gradient-warm grid place-items-center p-4">
-        <div className="max-w-md gradient-card rounded-3xl shadow-warm p-8 text-center">
-          <h2 className="text-2xl font-bold mb-2">No admin access</h2>
-          <p className="text-muted-foreground mb-6">
-            If you're the first user, claim admin now. Otherwise ask an existing admin to grant you access.
-          </p>
-          <div className="space-y-3">
-            <Button onClick={claimAdmin} disabled={claiming} className="w-full rounded-full gradient-hero">
-              {claiming && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Claim Admin (first user only)
-            </Button>
-            <Button variant="outline" onClick={signOut} className="w-full rounded-full">Sign out</Button>
-            <Link to="/" className="block">
-              <Button variant="ghost" className="w-full rounded-full"><ArrowLeft className="w-4 h-4 mr-2" />Back to Home</Button>
-            </Link>
-          </div>
-          <p className="text-xs text-muted-foreground mt-4">User ID: {userId?.slice(0, 8)}...</p>
-        </div>
-      </div>
-    );
+  if (loading || !isAdmin) {
+    return <div className="min-h-screen grid place-items-center"><Loader2 className="animate-spin" /></div>;
   }
 
   return (
