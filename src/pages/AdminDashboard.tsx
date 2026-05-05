@@ -21,8 +21,9 @@ const AdminDashboard = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/admin/auth"); return; }
     setUserId(session.user.id);
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
-    setIsAdmin(!!data);
+    const { data, error } = await supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" });
+    if (error) toast.error(error.message);
+    setIsAdmin(Boolean(data));
     setLoading(false);
   };
 
@@ -39,7 +40,12 @@ const AdminDashboard = () => {
     const { data, error } = await supabase.rpc("claim_first_admin");
     setClaiming(false);
     if (error) return toast.error(error.message);
-    if (data) { toast.success("You are now admin!"); refresh(); }
+    if (data) {
+      setIsAdmin(true);
+      setLoading(false);
+      toast.success("You are now admin!");
+      navigate("/admin", { replace: true });
+    }
     else toast.error("An admin already exists. Ask them to grant you access.");
   };
 
