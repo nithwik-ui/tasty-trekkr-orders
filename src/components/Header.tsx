@@ -25,7 +25,7 @@ export const Header = () => {
             {open ? "Open" : "Closed"}
           </Badge>
           {loc.pathname !== "/admin" && (
-            <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary transition-smooth hidden sm:inline">Admin</Link>
+            <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary transition-smooth hidden sm:inline">Login</Link>
           )}
         </div>
       </div>
