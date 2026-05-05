@@ -17,6 +17,7 @@ const AdminDashboard = () => {
   const [claiming, setClaiming] = useState(false);
 
   const refresh = async () => {
+    setLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/admin/auth"); return; }
     setUserId(session.user.id);
