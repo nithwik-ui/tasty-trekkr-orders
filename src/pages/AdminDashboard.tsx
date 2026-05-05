@@ -78,9 +78,12 @@ const AdminDashboard = () => {
             <h1 className="text-xl font-bold">Admin Dashboard</h1>
             <p className="text-xs text-muted-foreground">Tasty Trekkrs</p>
           </div>
-          <Button variant="outline" size="sm" onClick={signOut} className="rounded-full">
-            <LogOut className="w-4 h-4 mr-2" />Sign out
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link to="/"><Button variant="ghost" size="sm" className="rounded-full"><ArrowLeft className="w-4 h-4 mr-2" />Home</Button></Link>
+            <Button variant="outline" size="sm" onClick={signOut} className="rounded-full">
+              <LogOut className="w-4 h-4 mr-2" />Sign out
+            </Button>
+          </div>
         </div>
       </header>
 
