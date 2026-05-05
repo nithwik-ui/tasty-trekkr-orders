@@ -18,7 +18,7 @@ export const useShopSettings = () => {
     };
     fetch();
 
-    const channel = supabase.channel("settings_realtime")
+    const channel = supabase.channel(`settings_realtime_${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "settings" }, (payload) => {
         if (payload.new) setSettings(payload.new as ShopSettings);
       })
