@@ -60,6 +60,9 @@ const AdminDashboard = () => {
               Claim Admin (first user only)
             </Button>
             <Button variant="outline" onClick={signOut} className="w-full rounded-full">Sign out</Button>
+            <Link to="/" className="block">
+              <Button variant="ghost" className="w-full rounded-full"><ArrowLeft className="w-4 h-4 mr-2" />Back to Home</Button>
+            </Link>
           </div>
           <p className="text-xs text-muted-foreground mt-4">User ID: {userId?.slice(0, 8)}...</p>
         </div>
