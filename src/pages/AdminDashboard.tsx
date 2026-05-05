@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut, Package, ShoppingBag, Settings as SettingsIcon, ToggleRight } from "lucide-react";
+import { ArrowLeft, Loader2, LogOut, Package, ShoppingBag, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminProducts } from "@/components/admin/AdminProducts";
@@ -60,6 +60,9 @@ const AdminDashboard = () => {
               Claim Admin (first user only)
             </Button>
             <Button variant="outline" onClick={signOut} className="w-full rounded-full">Sign out</Button>
+            <Link to="/" className="block">
+              <Button variant="ghost" className="w-full rounded-full"><ArrowLeft className="w-4 h-4 mr-2" />Back to Home</Button>
+            </Link>
           </div>
           <p className="text-xs text-muted-foreground mt-4">User ID: {userId?.slice(0, 8)}...</p>
         </div>
@@ -75,9 +78,12 @@ const AdminDashboard = () => {
             <h1 className="text-xl font-bold">Admin Dashboard</h1>
             <p className="text-xs text-muted-foreground">Tasty Trekkrs</p>
           </div>
-          <Button variant="outline" size="sm" onClick={signOut} className="rounded-full">
-            <LogOut className="w-4 h-4 mr-2" />Sign out
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link to="/"><Button variant="ghost" size="sm" className="rounded-full"><ArrowLeft className="w-4 h-4 mr-2" />Home</Button></Link>
+            <Button variant="outline" size="sm" onClick={signOut} className="rounded-full">
+              <LogOut className="w-4 h-4 mr-2" />Sign out
+            </Button>
+          </div>
         </div>
       </header>
 
