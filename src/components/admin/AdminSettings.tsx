@@ -31,11 +31,23 @@ export const AdminSettings = () => {
   };
 
   const saveWhatsapp = async () => {
+    const digits = whatsapp.replace(/\D/g, "");
+    if (digits.length < 10 || digits.length > 15) {
+      toast.error("Enter the number with country code, e.g. 919876543210");
+      return;
+    }
     setSaving(true);
-    const { error } = await supabase.from("settings").update({ whatsapp_number: whatsapp }).eq("id", 1);
+    const { data, error } = await supabase
+      .from("settings")
+      .update({ whatsapp_number: digits })
+      .eq("id", 1)
+      .select("whatsapp_number")
+      .maybeSingle();
     setSaving(false);
-    if (error) toast.error(error.message);
-    else toast.success("WhatsApp number saved");
+    if (error) { toast.error(error.message); return; }
+    if (!data) { toast.error("Could not save — please sign in again as admin."); return; }
+    setWhatsapp(data.whatsapp_number);
+    toast.success("WhatsApp number saved");
   };
 
   if (loading) return <Loader2 className="animate-spin" />;
