@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Product, CATEGORIES } from "@/types";
+import { Product } from "@/types";
+import { useCategories } from "@/hooks/useCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,21 @@ export const AdminProducts = () => {
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState<any>(empty);
   const [imgFile, setImgFile] = useState<File | null>(null);
+  const { categories, addCategory } = useCategories();
+  const [newCat, setNewCat] = useState("");
+  const [showNewCat, setShowNewCat] = useState(false);
+  const [addingCat, setAddingCat] = useState(false);
+
+  const createCategory = async () => {
+    setAddingCat(true);
+    const { error } = await addCategory(newCat);
+    setAddingCat(false);
+    if (error) return toast.error(error);
+    setForm((f: any) => ({ ...f, category: newCat.trim() }));
+    toast.success(`Category "${newCat.trim()}" added`);
+    setNewCat("");
+    setShowNewCat(false);
+  };
 
   const load = async () => {
     const { data } = await supabase.from("products").select("*").order("category").order("name");
