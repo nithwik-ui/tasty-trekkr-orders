@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, Product } from "@/types";
+import { Product } from "@/types";
+import { useCategories } from "@/hooks/useCategories";
 import { Header } from "@/components/Header";
 import { ProductCard } from "@/components/ProductCard";
 import { FloatingCart } from "@/components/FloatingCart";
@@ -14,6 +15,7 @@ const Index = () => {
   const [active, setActive] = useState<string>("All");
   const [q, setQ] = useState("");
   const { settings } = useShopSettings();
+  const { categories } = useCategories();
 
   useEffect(() => {
     supabase.from("products").select("*").eq("is_active", true).order("category").then(({ data }) => {
@@ -68,7 +70,7 @@ const Index = () => {
           <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search the menu..." className="pl-11 h-12 rounded-full bg-card border-border" />
         </div>
         <div className="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-none">
-          {(["All", ...CATEGORIES] as string[]).map(c => (
+          {(["All", ...categories] as string[]).map(c => (
             <button
               key={c}
               onClick={() => setActive(c)}
