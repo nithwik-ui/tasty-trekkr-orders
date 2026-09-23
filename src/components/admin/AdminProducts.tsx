@@ -143,13 +143,35 @@ export const AdminProducts = () => {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Category</Label>
-                <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                <Select
+                  value={form.category}
+                  onValueChange={v => {
+                    if (v === "__new__") { setShowNewCat(true); return; }
+                    setShowNewCat(false);
+                    setForm({ ...form, category: v });
+                  }}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                    {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    <SelectItem value="__new__">+ Add new category…</SelectItem>
+                  </SelectContent>
                 </Select>
               </div>
               <div><Label>Size (optional)</Label><Input value={form.size} onChange={e => setForm({ ...form, size: e.target.value })} placeholder="500ml, Large..." /></div>
             </div>
+            {showNewCat && (
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <Label>New category name</Label>
+                  <Input value={newCat} onChange={e => setNewCat(e.target.value)} placeholder="Wraps, Desserts..." />
+                </div>
+                <Button type="button" onClick={createCategory} disabled={addingCat || !newCat.trim()}>
+                  {addingCat && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}Add
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => { setShowNewCat(false); setNewCat(""); }}>Cancel</Button>
+              </div>
+            )}
             <div>
               <Label>Image</Label>
               <Input type="file" accept="image/*" onChange={e => setImgFile(e.target.files?.[0] || null)} />
