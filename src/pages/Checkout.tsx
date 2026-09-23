@@ -58,8 +58,13 @@ const Checkout = () => {
       toast.error(parsed.error.errors[0].message);
       return;
     }
-    setLoading(true);
     const closed = settings.shop_status === "CLOSED";
+    const num = (settings.whatsapp_number || "").replace(/\D/g, "");
+    if (!closed && num.length < 10) {
+      toast.error("Ordering is not set up yet — the shop's WhatsApp number is missing.");
+      return;
+    }
+    setLoading(true);
     const orderItems = items.map(i => ({ id: i.product.id, name: i.product.name, qty: i.qty, price: Number(i.product.price) }));
 
     const { error } = await supabase.from("orders").insert({
@@ -98,7 +103,6 @@ const Checkout = () => {
       `*Total: ₹${total.toFixed(0)}*`,
     ].filter(Boolean).join("\n");
 
-    const num = (settings.whatsapp_number || "").replace(/\D/g, "");
     const url = `https://wa.me/${num}?text=${encodeURIComponent(lines)}`;
 
     clear();
